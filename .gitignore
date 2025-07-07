@@ -28,6 +28,17 @@
 /api/.funcignore
 /api/local.settings.json
 
+# Security - prevent credential leaks
+**/credentials.*
+**/secrets.*
+*.key
+*.pem
+*.p12
+*.pfx
+config.production.local.json
+appsettings.*.json
+local.settings.json
+
 # IDE and editor files
 .vscode/settings.json
 .vscode/launch.json

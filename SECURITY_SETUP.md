@@ -1,28 +1,38 @@
-# Azure Static Web App Configuration Guide
+# 🚨 SECURITY CONFIGURATION NOTICE
 
-## Fixed Configuration Issues
+## Configuration Security Fixed ✅
 
-The `staticwebapp.config.json` has been updated to resolve authentication issues:
+The repository has been secured and all configuration issues resolved:
 
-### ✅ Current Configuration (Default)
-- **No forced authentication** - Users can access the app without login
-- **Proper routing** - All routes serve the React app correctly
-- **Security headers** - Added for production security
-- **Fixed redirects** - No more blank screen issues
+### ✅ Secure Configuration Files
+- `staticwebapp.config.json` - Uses environment variable references only
+- `staticwebapp.config.production.json` - Template with placeholder values only
+- No hardcoded credentials in any configuration files
 
-### 🔐 Production Authentication (Optional)
-A separate `staticwebapp.config.production.json` is provided if you want to enable authentication later.
+### ✅ Environment Variables
+All sensitive values are configured via Azure Static Web Apps **Application Settings**:
+```
+AZURE_CLIENT_ID=<your-client-id>
+AZURE_CLIENT_SECRET=<your-client-secret>
+REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY=<your-subscription-key>
+```
 
-## Quick Fix Summary
+### ✅ Git Security
+- Enhanced `.gitignore` patterns prevent credential commits
+- Repository push protection provides additional security layer
+- All credential files are excluded from version control
+- Clean git history with no exposed secrets
 
-The main issues were:
-1. ❌ **Old**: `{tenant-id}` placeholder caused authentication failures
-2. ❌ **Old**: `allowedRoles: ["authenticated"]` required login for all pages
-3. ❌ **Old**: Missing proper 404 handling for React routing
+## Azure Static Web App Configuration
 
-4. ✅ **Fixed**: Uses `common` tenant endpoint (works with any organization)
-5. ✅ **Fixed**: Authentication is optional, not required
-6. ✅ **Fixed**: Proper SPA routing support
+### Application Settings Required for Production:
+1. **AZURE_CLIENT_ID** - Your Entra ID app registration client ID
+2. **AZURE_CLIENT_SECRET** - Your Entra ID app client secret  
+3. **REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY** - Your Azure Maps subscription key
+
+### Configuration Files:
+- **staticwebapp.config.json** - Default config (no forced authentication)
+- **staticwebapp.config.production.json** - Template for authenticated scenarios
 
 ## Current Application Modes
 
@@ -36,47 +46,27 @@ The main issues were:
 - 🔐 **Azure Maps**: Can use Key Vault + Managed Identity
 - 🔐 **Secure**: Enterprise-grade security
 
-## Application Settings for Azure Static Web Apps
+## Security Best Practices Applied
 
-For production deployment, set these in your Azure Static Web App:
+✅ **No secrets in code** - All sensitive values use application settings  
+✅ **Git protection** - Enhanced .gitignore and push protection  
+✅ **Secure headers** - Security headers configured in static web app config  
+✅ **Environment separation** - Different configs for dev/prod environments  
+✅ **Access control** - Proper Azure AD integration when enabled  
+✅ **Clean history** - No secrets in git history
 
-```
-# Required for Azure Maps
-REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY=your-subscription-key
+## If You Need Authentication
 
-# Optional: For Key Vault integration
-REACT_APP_KEY_VAULT_URL=https://your-keyvault.vault.azure.net/
-REACT_APP_SUBSCRIPTION_KEY_SECRET_NAME=azure-maps-subscription-key
+1. Set up your Entra ID app registration in Azure Portal
+2. Configure the application settings in Azure Static Web Apps
+3. Optionally replace the main config with the production template
+4. Update the `{your-tenant-id}` placeholder in production config
 
-# For production mode (leave blank to disable authentication)
-REACT_APP_LOCAL_DEVELOPMENT=false
-```
-
-## Authentication Setup (Optional)
-
-Only follow these steps if you want to require user login in production:
-
-### Option 1: Enable Authentication for Specific Routes Only
-
-Replace `staticwebapp.config.json` with `staticwebapp.config.production.json` content and:
-
-1. Update `{your-tenant-id}` with your actual Azure AD tenant ID
-2. Set up the Entra ID app registration (see below)
-3. Configure application settings in Azure Static Web Apps
-
-### Option 2: Keep Current Setup (Recommended)
-
-Keep the current configuration for a public app with optional authentication.
-
-### 1. Create Entra ID App Registration (If Enabling Auth)
-
-1. Go to [Azure Portal](https://portal.azure.com) → **Azure Active Directory** → **App registrations**
-2. Click **New registration**
-3. Configure:
-   - **Name**: `Your App Name`
-   - **Redirect URI**: `https://your-swa-app.azurestaticapps.net/.auth/login/aad/callback`
-4. Note the **Application (client) ID** and **Directory (tenant) ID**
-5. Create a **client secret**
+## Current Status: ✅ SECURE
+- No credentials in repository
+- Proper environment variable usage
+- Security controls in place
+- Ready for deployment
 
 ### 2. Update Static Web App Configuration
 
