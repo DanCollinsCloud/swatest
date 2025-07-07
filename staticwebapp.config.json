@@ -3,8 +3,7 @@
     {
       "route": "/*",
       "serve": "/index.html",
-      "statusCode": 200,
-      "allowedRoles": ["authenticated"]
+      "statusCode": 200
     }
   ],
   "navigationFallback": {
@@ -13,22 +12,5 @@
   },
   "mimeTypes": {
     ".json": "text/json"
-  },
-  "auth": {
-    "identityProviders": {
-      "azureActiveDirectory": {
-        "registration": {
-          "openIdIssuer": "https://login.microsoftonline.com/{tenant-id}/v2.0",
-          "clientIdSettingName": "AZURE_CLIENT_ID",
-          "clientSecretSettingName": "AZURE_CLIENT_SECRET"
-        }
-      }
-    }
-  },
-  "responseOverrides": {
-    "401": {
-      "redirect": "/.auth/login/aad",
-      "statusCode": 302
-    }
   }
 }

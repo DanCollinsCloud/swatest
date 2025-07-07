@@ -7,6 +7,9 @@ interface SWAUser {
 }
 
 export const azureMapsConfig = {
+  // Check if we're in local development mode
+  isLocalDevelopment: process.env.REACT_APP_LOCAL_DEVELOPMENT === 'true',
+  
   // Key Vault configuration (set in Azure Static Web Apps application settings)
   keyVaultUrl: process.env.REACT_APP_KEY_VAULT_URL || '',
   subscriptionKeySecretName: process.env.REACT_APP_SUBSCRIPTION_KEY_SECRET_NAME || 'azure-maps-subscription-key',
@@ -20,8 +23,19 @@ export const azureMapsConfig = {
 
 /**
  * Gets the current authenticated user from Azure Static Web Apps
+ * Returns null in local development mode
  */
 export const getCurrentUser = async (): Promise<SWAUser | null> => {
+  // Skip authentication in local development
+  if (azureMapsConfig.isLocalDevelopment) {
+    return {
+      identityProvider: 'local',
+      userId: 'local-dev-user',
+      userDetails: 'Local Development User',
+      userRoles: ['authenticated']
+    };
+  }
+
   try {
     const response = await fetch('/.auth/me');
     const payload = await response.json();
@@ -39,8 +53,7 @@ export const getCurrentUser = async (): Promise<SWAUser | null> => {
 
 /**
  * Gets Azure Maps subscription key from Azure Key Vault using the user's access token
- * Note: This is a simplified example. In reality, you'd need to configure proper permissions
- * and potentially use a backend service for Key Vault access.
+ * In local development, uses environment variable directly
  */
 export const getAzureMapsSubscriptionKey = async (): Promise<string | null> => {
   try {
@@ -51,14 +64,29 @@ export const getAzureMapsSubscriptionKey = async (): Promise<string | null> => {
       return azureMapsConfig.subscriptionKeyCache.key;
     }
 
-    // In a real implementation, you would:
-    // 1. Get the user's access token from SWA
-    // 2. Use that token to call Key Vault
-    // 3. For this demo, we'll use a fallback approach
+    // In local development, use environment variable directly
+    if (azureMapsConfig.isLocalDevelopment) {
+      console.log('🔧 Local development mode: Using subscription key from environment variables');
+      const subscriptionKey = process.env.REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY;
+      
+      if (subscriptionKey) {
+        // Cache the key for 1 hour
+        azureMapsConfig.subscriptionKeyCache.key = subscriptionKey;
+        azureMapsConfig.subscriptionKeyCache.expiresAt = now + (60 * 60 * 1000); // 1 hour
+        
+        console.log('✅ Successfully retrieved Azure Maps subscription key (local dev)');
+        return subscriptionKey;
+      }
+      
+      throw new Error('No subscription key available in local development');
+    }
+
+    // Production: This would retrieve from Key Vault using Managed Identity
+    console.log('🔐 Production mode: Would retrieve key from Azure Key Vault using Managed Identity');
+    console.log('📝 Note: In production, this would call Key Vault API with the user\'s token');
     
-    console.log('📝 Note: In production, this would retrieve the key from Azure Key Vault using Managed Identity');
-    console.log('📝 For now, using environment variable as fallback');
-    
+    // For now, fall back to environment variable with a warning
+    console.warn('⚠️ Falling back to environment variable - configure Key Vault for production');
     const subscriptionKey = process.env.REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY;
     
     if (subscriptionKey) {
@@ -66,7 +94,7 @@ export const getAzureMapsSubscriptionKey = async (): Promise<string | null> => {
       azureMapsConfig.subscriptionKeyCache.key = subscriptionKey;
       azureMapsConfig.subscriptionKeyCache.expiresAt = now + (60 * 60 * 1000); // 1 hour
       
-      console.log('✅ Successfully retrieved Azure Maps subscription key');
+      console.log('✅ Successfully retrieved Azure Maps subscription key (fallback)');
       return subscriptionKey;
     }
     

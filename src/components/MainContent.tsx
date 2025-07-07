@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getCurrentUser } from '../authConfig';
+import { getCurrentUser, azureMapsConfig } from '../authConfig';
 import { AzureMapComponent } from './AzureMapComponent';
 import './MainContent.css';
 
@@ -15,7 +15,10 @@ export const MainContent: React.FC = () => {
         if (currentUser) {
           setUser(currentUser);
         } else {
-          setError('Not authenticated');
+          // Only set error if not in local development mode
+          if (!azureMapsConfig.isLocalDevelopment) {
+            setError('Not authenticated');
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Authentication error');
@@ -33,12 +36,26 @@ export const MainContent: React.FC = () => {
         <h1>🔐 Secure Azure Static Web App with Azure Maps</h1>
         <div className="auth-section">
           <div className="status-info">
-            <span className="status-label">Authentication Status:</span>
+            <span className="status-label">Mode:</span>
             <span className={`status-indicator ${user ? 'configured' : 'not-configured'}`}>
-              {isLoading ? 'Checking...' : user ? `Authenticated as ${user.userDetails}` : 'Not Authenticated'}
+              {isLoading ? 'Checking...' : 
+               azureMapsConfig.isLocalDevelopment ? 'Local Development' : 
+               user ? `Authenticated as ${user.userDetails}` : 'Not Authenticated'}
             </span>
           </div>
-          {user && (
+          
+          {azureMapsConfig.isLocalDevelopment && (
+            <div style={{ marginTop: '10px', fontSize: '14px', backgroundColor: '#fff3cd', padding: '10px', borderRadius: '4px' }}>
+              <strong>🔧 Local Development Mode:</strong>
+              <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
+                <li>✅ Authentication bypassed for local testing</li>
+                <li>✅ Using subscription key from environment variables</li>
+                <li>✅ No Azure AD login required</li>
+              </ul>
+            </div>
+          )}
+          
+          {user && !azureMapsConfig.isLocalDevelopment && (
             <div style={{ marginTop: '10px', fontSize: '14px' }}>
               <strong>Security Features:</strong>
               <ul style={{ margin: '5px 0', paddingLeft: '20px' }}>
@@ -54,10 +71,10 @@ export const MainContent: React.FC = () => {
       <main className="main-section">
         {isLoading ? (
           <div className="loading-message">
-            <h2>🔐 Authenticating...</h2>
-            <p>Verifying Entra ID credentials...</p>
+            <h2>🔐 Initializing...</h2>
+            <p>{azureMapsConfig.isLocalDevelopment ? 'Starting local development mode...' : 'Verifying Entra ID credentials...'}</p>
           </div>
-        ) : error ? (
+        ) : error && !azureMapsConfig.isLocalDevelopment ? (
           <div className="error-message">
             <h2>❌ Authentication Required</h2>
             <p>You must be logged in to access this application.</p>
@@ -88,7 +105,7 @@ export const MainContent: React.FC = () => {
           </div>
         ) : (
           <div className="map-container">
-            <h2>🗺️ Secure Azure Maps</h2>
+            <h2>🗺️ {azureMapsConfig.isLocalDevelopment ? 'Azure Maps (Local Development)' : 'Secure Azure Maps'}</h2>
             <AzureMapComponent />
           </div>
         )}

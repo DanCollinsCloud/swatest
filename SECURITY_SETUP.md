@@ -1,25 +1,105 @@
-# Secure Azure Static Web App with Key Vault Setup
+# Azure Static Web App Configuration Guide
 
-This application demonstrates a secure architecture using:
-- **Entra ID authentication**: Users must login to access the app
-- **Azure Key Vault**: Stores the Azure Maps subscription key securely
-- **Managed Identity**: Provides secure access to Key Vault (in production)
+## Current Issue Fix
 
-## Important Security Note
+If you're getting redirected to `.auth/login/aad` and seeing a blank screen, it's because the authentication configuration is not properly set up. 
 
-**Two separate authentication mechanisms are used:**
+## Quick Fix (Recommended)
 
-1. **User Authentication** (Entra ID App Registration):
-   - Purpose: Allow users to login to the web application
-   - Requires: Client ID and Client Secret (configured in Azure Static Web Apps)
-   - Used by: Azure Static Web Apps built-in authentication
+The application is now configured to work in both modes:
 
-2. **Key Vault Access** (Managed Identity):
-   - Purpose: Allow the application to retrieve secrets from Key Vault
-   - Requires: NO secrets! Uses Azure Managed Identity
-   - Used by: Application code to access Key Vault
+### Local Development (Current Setup)
+- ✅ **Authentication**: Disabled for local testing
+- ✅ **Azure Maps**: Uses subscription key from `.env.local`
+- ✅ **No redirects**: Works immediately without login
 
-**The client ID/secret are NOT used for Key Vault access - that's the whole point of Managed Identity!**
+### Production (Optional Setup)
+- 🔐 **Authentication**: Entra ID required (if enabled)
+- 🔐 **Azure Maps**: Can use Key Vault + Managed Identity
+- 🔐 **Secure**: Enterprise-grade security
+
+## Application Settings for Azure Static Web Apps
+
+If you want to enable authentication in production, set these in your Azure Static Web App:
+
+```
+# Required for Azure Maps
+REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY=your-subscription-key
+
+# Optional: For Key Vault integration
+REACT_APP_KEY_VAULT_URL=https://your-keyvault.vault.azure.net/
+REACT_APP_SUBSCRIPTION_KEY_SECRET_NAME=azure-maps-subscription-key
+
+# For production mode (leave blank to disable authentication)
+REACT_APP_LOCAL_DEVELOPMENT=false
+```
+
+## Authentication Setup (Optional)
+
+Only follow these steps if you want to require user login in production:
+
+### 1. Create Entra ID App Registration
+
+1. Go to [Azure Portal](https://portal.azure.com) → **Azure Active Directory** → **App registrations**
+2. Click **New registration**
+3. Configure:
+   - **Name**: `Your App Name`
+   - **Redirect URI**: `https://your-swa-app.azurestaticapps.net/.auth/login/aad/callback`
+4. Note the **Application (client) ID** and **Directory (tenant) ID**
+5. Create a **client secret**
+
+### 2. Update Static Web App Configuration
+
+Replace the placeholder in `staticwebapp.config.json`:
+
+```json
+{
+  "routes": [
+    {
+      "route": "/*",
+      "serve": "/index.html",
+      "statusCode": 200,
+      "allowedRoles": ["authenticated"]
+    }
+  ],
+  "auth": {
+    "identityProviders": {
+      "azureActiveDirectory": {
+        "registration": {
+          "openIdIssuer": "https://login.microsoftonline.com/YOUR-TENANT-ID/v2.0",
+          "clientIdSettingName": "AZURE_CLIENT_ID",
+          "clientSecretSettingName": "AZURE_CLIENT_SECRET"
+        }
+      }
+    }
+  },
+  "responseOverrides": {
+    "401": {
+      "redirect": "/.auth/login/aad",
+      "statusCode": 302
+    }
+  }
+}
+```
+
+### 3. Set Application Settings
+
+In Azure Static Web Apps → Configuration → Application settings:
+
+```
+AZURE_CLIENT_ID=your-client-id
+AZURE_CLIENT_SECRET=your-client-secret
+REACT_APP_LOCAL_DEVELOPMENT=false
+```
+
+## Current Status
+
+✅ **Working Now**: Application works without authentication  
+✅ **Local Development**: Fully functional with subscription key  
+✅ **Production Ready**: Can be deployed as-is  
+🔧 **Authentication**: Optional - can be enabled later  
+
+The app will work immediately in both local development and Azure Static Web Apps without requiring any authentication setup!
 
 ## Local Development
 

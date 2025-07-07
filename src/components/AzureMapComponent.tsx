@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { getCurrentUser, getAzureMapsAuthConfig } from '../authConfig';
+import { getCurrentUser, getAzureMapsAuthConfig, azureMapsConfig } from '../authConfig';
 import * as atlas from 'azure-maps-control';
 import 'azure-maps-control/dist/atlas.min.css';
 
@@ -16,8 +16,8 @@ export const AzureMapComponent: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // Get current authenticated user
-        console.log('Getting authenticated user...');
+        // Get current user (or mock user in local dev)
+        console.log('Getting user information...');
         const currentUser = await getCurrentUser();
         
         if (!currentUser) {
@@ -25,7 +25,7 @@ export const AzureMapComponent: React.FC = () => {
         }
         
         setUser(currentUser);
-        console.log('✅ User authenticated:', currentUser.userDetails);
+        console.log('✅ User information retrieved:', currentUser.userDetails);
 
         // Initialize the map
         await initializeMap();
@@ -77,13 +77,14 @@ export const AzureMapComponent: React.FC = () => {
           
           mapInstance.markers.add(marker);
           
-          // Add a sample popup
+          // Add a sample popup with appropriate content
+          const authMethod = azureMapsConfig.isLocalDevelopment ? 'Local Development' : 'Entra ID + Key Vault';
           const popup = new atlas.Popup({
             content: `<div style="padding: 10px;">
-              <strong>Secure Azure Maps!</strong><br/>
-              User: ${user?.userDetails || 'Authenticated'}<br/>
-              Authentication: Entra ID + Key Vault<br/>
-              <small>Subscription key secured in Azure Key Vault</small>
+              <strong>${azureMapsConfig.isLocalDevelopment ? 'Azure Maps (Dev Mode)' : 'Secure Azure Maps!'}</strong><br/>
+              User: ${user?.userDetails || 'Local User'}<br/>
+              Authentication: ${authMethod}<br/>
+              <small>${azureMapsConfig.isLocalDevelopment ? 'Development mode - simplified authentication' : 'Subscription key secured in Azure Key Vault'}</small>
             </div>`,
             position: [-122.33, 47.6],
           });
