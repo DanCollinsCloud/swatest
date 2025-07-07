@@ -1,0 +1,287 @@
+.main-content {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #0078d4, #106ebe);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.auth-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.auth-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-button {
+  background: #ffffff;
+  color: #0078d4;
+}
+
+.login-button:hover {
+  background: #f3f2f1;
+  transform: translateY(-1px);
+}
+
+.logout-button {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.logout-button:hover {
+  background: white;
+  color: #0078d4;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-weight: 500;
+}
+
+.main-section {
+  flex: 1;
+  padding: 2rem;
+  background: #f8f9fa;
+}
+
+.map-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.map-container h2 {
+  color: #323130;
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+}
+
+.map-wrapper {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.azure-map {
+  margin-bottom: 1rem;
+}
+
+.map-info {
+  background: #f3f2f1;
+  padding: 1rem;
+  border-radius: 4px;
+  border-left: 4px solid #0078d4;
+}
+
+.map-info p {
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+  color: #323130;
+}
+
+.map-info ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.map-info li {
+  margin: 0.25rem 0;
+  color: #605e5c;
+}
+
+.welcome-message {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  background: white;
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-message h2 {
+  color: #323130;
+  margin-bottom: 1rem;
+  font-size: 2rem;
+}
+
+.welcome-message p {
+  color: #605e5c;
+  margin-bottom: 2rem;
+  font-size: 1.1rem;
+}
+
+.welcome-message ul {
+  text-align: left;
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.welcome-message li {
+  list-style: none;
+  padding: 0.5rem 0;
+  color: #0078d4;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.status-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-label {
+  font-weight: 500;
+}
+
+.status-indicator {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-indicator.configured {
+  background: #d1f2eb;
+  color: #0e7c5a;
+}
+
+.status-indicator.not-configured {
+  background: #fdeaea;
+  color: #c53030;
+}
+
+.loading-message {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  background: white;
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.auth-status {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #0078d4;
+}
+
+.auth-status h3 {
+  margin: 0 0 1rem 0;
+  color: #323130;
+  font-size: 1.25rem;
+}
+
+.auth-status ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.auth-status li {
+  padding: 0.5rem 0;
+  font-weight: 500;
+}
+
+.status-success {
+  color: #0e7c5a;
+}
+
+.status-warning {
+  color: #d68910;
+}
+
+.status-info {
+  color: #0078d4;
+}
+
+.config-instructions {
+  text-align: left;
+  margin: 2rem 0;
+}
+
+.config-option {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  margin: 1rem 0;
+  border-radius: 8px;
+  border-left: 4px solid #0078d4;
+}
+
+.config-option h4 {
+  margin: 0 0 0.5rem 0;
+  color: #323130;
+}
+
+.config-option p {
+  margin: 0.5rem 0;
+  color: #605e5c;
+}
+
+.config-option pre {
+  background: #323130;
+  color: #ffffff;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+}
+
+.config-option code {
+  background: #f3f2f1;
+  color: #323130;
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .main-section {
+    padding: 1rem;
+  }
+  
+  .welcome-message {
+    padding: 2rem 1rem;
+  }
+  
+  .map-wrapper {
+    padding: 1rem;
+  }
+}
