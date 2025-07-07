@@ -18,6 +18,16 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: true
+          lfs: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build And Deploy
         id: builddeploy
@@ -29,8 +39,12 @@ jobs:
           app_location: "/"
           api_location: ""
           output_location: "build"
+          build_timeout_in_minutes: 10
         env:
+          # Environment variables for the build process
           REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY: ${{ secrets.REACT_APP_AZURE_MAPS_SUBSCRIPTION_KEY }}
+          REACT_APP_KEY_VAULT_URL: ${{ secrets.REACT_APP_KEY_VAULT_URL }}
+          REACT_APP_SUBSCRIPTION_KEY_SECRET_NAME: ${{ secrets.REACT_APP_SUBSCRIPTION_KEY_SECRET_NAME }}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
