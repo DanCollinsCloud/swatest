@@ -22,7 +22,6 @@
     ".json": "application/json"
   },
   "auth": {
-    "rolesSource": "/.auth/me",
     "identityProviders": {
       "azureActiveDirectory": {
         "registration": {
