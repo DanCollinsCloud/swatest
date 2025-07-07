@@ -1,12 +1,30 @@
 # Azure Static Web App Configuration Guide
 
-## Current Issue Fix
+## Fixed Configuration Issues
 
-If you're getting redirected to `.auth/login/aad` and seeing a blank screen, it's because the authentication configuration is not properly set up. 
+The `staticwebapp.config.json` has been updated to resolve authentication issues:
 
-## Quick Fix (Recommended)
+### ✅ Current Configuration (Default)
+- **No forced authentication** - Users can access the app without login
+- **Proper routing** - All routes serve the React app correctly
+- **Security headers** - Added for production security
+- **Fixed redirects** - No more blank screen issues
 
-The application is now configured to work in both modes:
+### 🔐 Production Authentication (Optional)
+A separate `staticwebapp.config.production.json` is provided if you want to enable authentication later.
+
+## Quick Fix Summary
+
+The main issues were:
+1. ❌ **Old**: `{tenant-id}` placeholder caused authentication failures
+2. ❌ **Old**: `allowedRoles: ["authenticated"]` required login for all pages
+3. ❌ **Old**: Missing proper 404 handling for React routing
+
+4. ✅ **Fixed**: Uses `common` tenant endpoint (works with any organization)
+5. ✅ **Fixed**: Authentication is optional, not required
+6. ✅ **Fixed**: Proper SPA routing support
+
+## Current Application Modes
 
 ### Local Development (Current Setup)
 - ✅ **Authentication**: Disabled for local testing
@@ -14,13 +32,13 @@ The application is now configured to work in both modes:
 - ✅ **No redirects**: Works immediately without login
 
 ### Production (Optional Setup)
-- 🔐 **Authentication**: Entra ID required (if enabled)
+- 🔐 **Authentication**: Entra ID available (if enabled)
 - 🔐 **Azure Maps**: Can use Key Vault + Managed Identity
 - 🔐 **Secure**: Enterprise-grade security
 
 ## Application Settings for Azure Static Web Apps
 
-If you want to enable authentication in production, set these in your Azure Static Web App:
+For production deployment, set these in your Azure Static Web App:
 
 ```
 # Required for Azure Maps
@@ -38,7 +56,19 @@ REACT_APP_LOCAL_DEVELOPMENT=false
 
 Only follow these steps if you want to require user login in production:
 
-### 1. Create Entra ID App Registration
+### Option 1: Enable Authentication for Specific Routes Only
+
+Replace `staticwebapp.config.json` with `staticwebapp.config.production.json` content and:
+
+1. Update `{your-tenant-id}` with your actual Azure AD tenant ID
+2. Set up the Entra ID app registration (see below)
+3. Configure application settings in Azure Static Web Apps
+
+### Option 2: Keep Current Setup (Recommended)
+
+Keep the current configuration for a public app with optional authentication.
+
+### 1. Create Entra ID App Registration (If Enabling Auth)
 
 1. Go to [Azure Portal](https://portal.azure.com) → **Azure Active Directory** → **App registrations**
 2. Click **New registration**
